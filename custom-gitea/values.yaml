@@ -1,0 +1,54 @@
+gitea:
+  replicaCount: 1
+  image:
+    repository: gitea/gitea
+    tag: latest
+    pullPolicy: IfNotPresent
+  service:
+    port: 80
+    targetPort: 3000
+  env:
+    dbType: postgres
+    dbHost: gitea-db-svc:5432
+    dbName: gitea
+    dbUser: gitea
+    dbPassword: gitea_admin
+    webhookAllowedHostList: "private"
+    webhookSkipTlsVerify: "true"
+  persistence:
+    enabled: true
+    size: 5Gi
+    storageClass: ""
+
+postgres:
+  replicaCount: 1
+  image:
+    repository: postgres
+    tag: "16"
+    pullPolicy: IfNotPresent
+  service:
+    port: 5432
+  env:
+    db: gitea
+    user: gitea
+    password: gitea_admin
+  persistence:
+    enabled: true
+    size: 1Gi
+    storageClass: ""
+
+ingress:
+  enabled: true
+  className: nginx
+  host: gitea.localhost
+
+# Optional static PVs (usually not needed with dynamic provisioning)
+pv:
+  enabled: false
+  reclaimPolicy: Retain
+  postgres:
+    capacity: 1Gi
+    hostPath: /mnt/data/postgres
+  gitea:
+    capacity: 5Gi
+    hostPath: /mnt/data/gitea

@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: gitea-config
+data:
+  GITEA__database__DB_TYPE: {{ .Values.gitea.env.dbType | quote }}
+  GITEA__database__HOST: {{ .Values.gitea.env.dbHost | quote }}
+  GITEA__database__NAME: {{ .Values.gitea.env.dbName | quote }}
+  GITEA__database__USER: {{ .Values.gitea.env.dbUser | quote }}
+  GITEA__webhook__ALLOWED_HOST_LIST: {{ .Values.gitea.env.webhookAllowedHostList | quote }}
+  GITEA__webhook__SKIP_TLS_VERIFY: {{ .Values.gitea.env.webhookSkipTlsVerify | quote }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: postgres-config
+data:
+  POSTGRES_DB: {{ .Values.postgres.env.db | quote }}
+  POSTGRES_USER: {{ .Values.postgres.env.user | quote }}

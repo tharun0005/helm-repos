@@ -1,0 +1,33 @@
+{{- if .Values.pv.enabled }}
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: postgres-pv
+spec:
+  capacity:
+    storage: {{ .Values.pv.postgres.capacity }}
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: {{ .Values.pv.reclaimPolicy }}
+  hostPath:
+    path: {{ .Values.pv.postgres.hostPath | quote }}
+  claimRef:
+    namespace: {{ .Release.Namespace }}
+    name: postgres-pvc
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: gitea-pv
+spec:
+  capacity:
+    storage: {{ .Values.pv.gitea.capacity }}
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: {{ .Values.pv.reclaimPolicy }}
+  hostPath:
+    path: {{ .Values.pv.gitea.hostPath | quote }}
+  claimRef:
+    namespace: {{ .Release.Namespace }}
+    name: gitea-pvc
+{{- end }}

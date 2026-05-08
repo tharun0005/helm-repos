@@ -1,0 +1,6 @@
+apiVersion: v2
+name: custom-jenkins
+description: A Helm chart for Jenkins (custom image)
+type: application
+version: 0.1.0
+appVersion: "v2"

@@ -1,0 +1,13 @@
+Jenkins has been deployed.
+
+Service:
+  Name: {{ include "custom-jenkins.fullname" . }}
+  Type: {{ .Values.service.type }}
+
+{{- if .Values.ingress.enabled }}
+Ingress:
+  Host: http://{{ .Values.ingress.host }}/
+{{- else }}
+To access Jenkins via port-forward:
+  kubectl -n {{ .Release.Namespace }} port-forward svc/{{ include "custom-jenkins.fullname" . }} 8080:{{ .Values.service.port }}
+{{- end }}

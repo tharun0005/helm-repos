@@ -1,0 +1,19 @@
+{{- if and .Values.persistence.enabled .Values.persistence.pv.enabled }}
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: {{ include "custom-jenkins.fullname" . }}
+  labels:
+    {{- include "custom-jenkins.labels" . | nindent 4 }}
+spec:
+  capacity:
+    storage: {{ .Values.persistence.pv.capacity }}
+  accessModes:
+    {{- toYaml .Values.persistence.pv.accessModes | nindent 4 }}
+  persistentVolumeReclaimPolicy: {{ .Values.persistence.pv.reclaimPolicy }}
+  hostPath:
+    path: {{ .Values.persistence.pv.hostPath | quote }}
+  claimRef:
+    namespace: {{ .Release.Namespace }}
+    name: jenkins-pvc
+{{- end }}
