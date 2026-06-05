@@ -102,4 +102,5 @@ spec:
           configMap:
             name: {{ .Release.Name }}-litellm-config
         - name: pg-storage
-          emptyDir: {}
+          persistentVolumeClaim:
+            claimName: {{ .Release.Name }}-pg-pvc
