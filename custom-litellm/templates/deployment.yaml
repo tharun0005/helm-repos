@@ -1,0 +1,105 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-litellm-stack
+  labels:
+    app: {{ .Release.Name }}-litellm-stack
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}-litellm-stack
+  template:
+    metadata:
+      labels:
+        app: {{ .Release.Name }}-litellm-stack
+    spec:
+      containers:
+        # --- Container 1: LiteLLM Proxy ---
+        - name: litellm
+          image: "ghcr.io/berriai/litellm:main-latest"
+          args: ["--config", "/app/config/config.yaml", "--port", "4000"]
+          ports:
+            - containerPort: 4000
+              name: litellm-port
+          env:
+            - name: MASTER_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: litellm-secrets
+                  key: LITELLM_API_KEY
+            - name: GROQ_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: litellm-secrets
+                  key: GROQ_API_KEY
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: litellm-secrets
+                  key: DATABASE_URL
+            - name: REDIS_HOST
+              value: "127.0.0.1"
+            - name: REDIS_PORT
+              value: "6379"
+            - name: REDIS_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: litellm-secrets
+                  key: REDIS_PASSWORD
+            - name: NVIDIA_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: litellm-secrets
+                  key: NVIDIA_API_KEY
+            - name: HF_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: litellm-secrets
+                  key: HF_TOKEN
+            - name: NVIDIA_API_BASE
+              value: "https://integrate.api.nvidia.com/v1"
+          volumeMounts:
+            - name: config-volume
+              mountPath: /app/config
+
+        # --- Container 2: PostgreSQL Database ---
+        - name: postgres
+          image: "postgres:16-alpine"
+          ports:
+            - containerPort: 5432
+              name: pg-port
+          env:
+            - name: POSTGRES_USER
+              value: postgres_admin
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: litellm-secrets
+                  key: POSTGRES_PASSWORD
+            - name: POSTGRES_DB
+              value: litellm
+          volumeMounts:
+            - name: pg-storage
+              mountPath: /var/lib/postgresql/data
+
+        # --- Container 3: Redis Cache ---
+        - name: redis
+          image: "redis:7-alpine"
+          command: ["redis-server", "--requirepass", "$(REDIS_PASSWORD)"]
+          ports:
+            - containerPort: 6379
+              name: redis-port
+          env:
+            - name: REDIS_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: litellm-secrets
+                  key: REDIS_PASSWORD
+
+      volumes:
+        - name: config-volume
+          configMap:
+            name: {{ .Release.Name }}-litellm-config
+        - name: pg-storage
+          emptyDir: {}

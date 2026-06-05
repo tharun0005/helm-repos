@@ -1,0 +1,23 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ .Release.Name }}-litellm-ingress
+  annotations:
+    # Specifies which Ingress Controller should handle this rule (usually NGINX)
+    kubernetes.io/ingress.class: nginx
+    # Optional but recommended for development: increases client body timeout for LLM streaming responses
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "600"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "600"
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: litellm.local
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ .Release.Name }}-litellm
+                port:
+                  number: 4000
