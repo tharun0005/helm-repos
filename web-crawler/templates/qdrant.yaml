@@ -34,8 +34,6 @@ spec:
         resources:
           requests:
             storage: 5Gi
-        volumeName: {{ .Release.Name }}-qdrant-pv
----
 apiVersion: v1
 kind: Service
 metadata:
