@@ -18,11 +18,11 @@ spec:
           image: postgres:16
           env:
             - name: POSTGRES_USER
-              value: {{ .Values.postgres.user | quote }}
+              value: "crawler" # FIXED: Decoupled from the missing .Values.postgres block
             - name: POSTGRES_PASSWORD
-              value: {{ .Values.postgres.password | quote }}
+              value: "crawler" # FIXED: Decoupled from the missing .Values.postgres block
             - name: POSTGRES_DB
-              value: {{ .Values.postgres.db | quote }}
+              value: "crawler"
           ports:
             - containerPort: 5432
           volumeMounts:
