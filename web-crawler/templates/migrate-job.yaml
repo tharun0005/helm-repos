@@ -2,11 +2,6 @@ apiVersion: batch/v1
 kind: Job
 metadata:
   name: {{ .Release.Name }}-migrate
-  annotations:
-    # Forces the migration to run BEFORE the API and Worker deployments spin up
-    helm.sh/hook: pre-install,pre-upgrade
-    # Cleans up the previous migration job tracking artifact before triggering a new run
-    helm.sh/hook-delete-policy: before-hook-creation
 spec:
   template:
     metadata:
