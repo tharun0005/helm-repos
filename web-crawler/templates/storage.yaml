@@ -33,6 +33,7 @@ spec:
     storage: 5Gi
   accessModes:
     - ReadWriteOnce
+  storageClassName: manual
   hostPath:
     path: "{{ .Values.global.hostMountPath }}/postgres"
 ---
@@ -46,5 +47,6 @@ spec:
     storage: 5Gi
   accessModes:
     - ReadWriteOnce
+  storageClassName: manual
   hostPath:
     path: "{{ .Values.global.hostMountPath }}/qdrant"
