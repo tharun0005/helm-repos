@@ -3,7 +3,7 @@ kind: StatefulSet
 metadata:
   name: {{ .Release.Name }}-postgres
 spec:
-  serviceName: {{ .Release.Name }}-postgres
+  serviceName: postgres
   replicas: 1
   selector:
     matchLabels:
@@ -18,9 +18,9 @@ spec:
           image: postgres:16
           env:
             - name: POSTGRES_USER
-              value: "crawler" # FIXED: Decoupled from the missing .Values.postgres block
+              value: "crawler"
             - name: POSTGRES_PASSWORD
-              value: "crawler" # FIXED: Decoupled from the missing .Values.postgres block
+              value: "crawler"
             - name: POSTGRES_DB
               value: "crawler"
           ports:
@@ -42,7 +42,6 @@ spec:
         resources:
           requests:
             storage: 5Gi
-        volumeName: {{ .Release.Name }}-pg-pv
 ---
 apiVersion: v1
 kind: Service
@@ -51,5 +50,6 @@ metadata:
 spec:
   ports:
     - port: 5432
+      targetPort: 5432
   selector:
     app: postgres

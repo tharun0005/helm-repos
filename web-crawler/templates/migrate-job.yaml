@@ -2,8 +2,16 @@ apiVersion: batch/v1
 kind: Job
 metadata:
   name: {{ .Release.Name }}-migrate
+  annotations:
+    # Forces the migration to run BEFORE the API and Worker deployments spin up
+    helm.sh/hook: pre-install,pre-upgrade
+    # Cleans up the previous migration job tracking artifact before triggering a new run
+    helm.sh/hook-delete-policy: before-hook-creation
 spec:
   template:
+    metadata:
+      labels:
+        app: migrate
     spec:
       restartPolicy: Never
       containers:
@@ -11,7 +19,6 @@ spec:
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           command: ["crawler-db-migrate"]
-          # FIXED: Cleanly loading the database URLs and paths from your Secret footprint
           envFrom:
             - secretRef:
                 name: {{ .Release.Name }}-crawler-env

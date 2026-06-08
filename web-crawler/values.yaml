@@ -4,7 +4,7 @@ global:
 image:
   repository: "tharun0511/web-scrapper-workspace"
   tag: "latest"
-  pullPolicy: IfNotPresent
+  pullPolicy: Always
 
 # Ingress Configuration
 ingress:
