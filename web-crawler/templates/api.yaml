@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: api
+  template:
+    metadata:
+      labels:
+        app: api
+    spec:
+      # Removed hostAliases since LiteLLM is natively in-cluster now
+      initContainers:
+        - name: wait-for-migrate
+          image: bitnami/kubectl:latest
+          command: ["kubectl", "wait", "--for=condition=complete", "job/{{ .Release.Name }}-migrate", "--timeout=120s"]
+      containers:
+        - name: api
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          command: ["sh", "/app/scripts/run-api.sh"]
+          ports:
+            - containerPort: 8000
+          envFrom:
+            - secretRef:
+                name: {{ .Release.Name }}-crawler-env
+          volumeMounts:
+            - name: shared-data
+              mountPath: /app/data
+      volumes:
+        - name: shared-data
+          persistentVolumeClaim:
+            claimName: {{ .Release.Name }}-data-pvc---
+apiVersion: v1
+kind: Service
+metadata:
+  name: api
+spec:
+  ports:
+    - port: 8000
+      targetPort: 8000
+  selector:
+    app: api

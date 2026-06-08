@@ -1,0 +1,33 @@
+global:
+  hostMountPath: "/tmp/k8s-crawler-data"
+
+image:
+  repository: "tharun0511/web-crawler-workspace"
+  tag: "latest"
+  pullPolicy: IfNotPresent
+
+# Ingress Configuration
+ingress:
+  enabled: true
+  className: "nginx" # change to your ingress controller class if different (e.g., traefik)
+  host: "crawler.local" # The domain you will use to access the API
+
+# Sensitive or Default App Configs
+appEnv:
+  DATABASE_URL: "postgresql+psycopg://crawler:crawler@postgres:5432/crawler"
+  REDIS_URL: "redis://redis:6379/0"
+  CRAWL_DATA_DIR: "/app/data/crawls" # Adjusted to match container absolute path
+  SCRAPE_DATA_DIR: "/app/data/scrapes" # Adjusted to match container absolute path
+  RQ_DEFAULT_TIMEOUT: "3600"
+  API_BASE_URL: "http://api:8000"
+  QDRANT_URL: "http://qdrant:6333"
+  QDRANT_COLLECTION: "scrape_embeddings"
+  LITELLM_BASE_URL: "http://litellm-litellm.litellm.svc.cluster.local:4000" 
+  OPENAI_API_KEY: "sk-bot-1234"
+  EMBEDDING_MODEL: "nvidia-embed-passage"
+  PLAYWRIGHT_TIMEOUT_MS: "30000"
+  SCRAPE_CONCURRENCY: "3"
+  SCRAPE_IO_WORKERS: "4"
+  SCRAPE_EMBED_WORKERS: "4"
+  SCRAPE_MAX_RETRIES: "3"
+  QDRANT_API_KEY: "qdrant"
