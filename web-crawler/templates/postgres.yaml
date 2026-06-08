@@ -30,7 +30,7 @@ spec:
               mountPath: /var/lib/postgresql/data
           readinessProbe:
             exec:
-              command: ["CMD-SHELL", "pg_isready -U {{ .Values.postgres.user }} -d {{ .Values.postgres.db }}"]
+              command: ["sh", "-c", "pg_isready -U crawler -d crawler"]
             initialDelaySeconds: 5
             periodSeconds: 5
   volumeClaimTemplates:
