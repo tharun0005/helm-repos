@@ -2,7 +2,7 @@ global:
   hostMountPath: "/tmp/k8s-crawler-data"
 
 image:
-  repository: "tharun0511/web-crawler-workspace"
+  repository: "tharun0511/web-scrapper-workspace"
   tag: "latest"
   pullPolicy: IfNotPresent
 
