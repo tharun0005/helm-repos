@@ -18,7 +18,8 @@ spec:
           image: qdrant/qdrant:v1.18.0
           env:
             - name: QDRANT__SERVICE__API_KEY
-              value: {{ .Values.qdrant.apiKey | quote }}
+              # FIXED: Pointing to your consolidated appEnv block
+              value: {{ .Values.appEnv.QDRANT_API_KEY | quote }}
           ports:
             - containerPort: 6333
           volumeMounts:
@@ -43,4 +44,3 @@ spec:
     - port: 6333
   selector:
     app: qdrant
-    
