@@ -11,12 +11,7 @@ spec:
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           command: ["crawler-db-migrate"]
-          env:
-            - name: DATABASE_URL
-              value: "postgresql+psycopg://{{ .Values.postgres.user }}:{{ .Values.postgres.password }}@postgres:5432/{{ .Values.postgres.db }}"
-            - name: REDIS_URL
-              value: "redis://redis:6379/0"
-            - name: CRAWL_DATA_DIR
-              value: "/app/data/crawls"
-            - name: SCRAPE_DATA_DIR
-              value: "/app/data/scrapes"
+          # FIXED: Cleanly loading the database URLs and paths from your Secret footprint
+          envFrom:
+            - secretRef:
+                name: {{ .Release.Name }}-crawler-env
