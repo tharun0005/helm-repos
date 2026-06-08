@@ -1,4 +1,4 @@
-# Shared Data PVC (Used by API and Worker)
+# Shared Data PV (Used by API and Worker)
 apiVersion: v1
 kind: PersistentVolume
 metadata:
@@ -8,6 +8,7 @@ spec:
     storage: 5Gi
   accessModes:
     - ReadWriteMany
+  storageClassName: manual # 1. ADD THIS LINE
   hostPath:
     path: "{{ .Values.global.hostMountPath }}/shared-data"
 ---
@@ -15,9 +16,11 @@ apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: {{ .Release.Name }}-data-pvc
+  namespace: crawler        # 2. ADD THIS TO MATCH YOUR PODS
 spec:
   accessModes:
     - ReadWriteMany
+  storageClassName: manual # 3. ADD THIS LINE
   resources:
     requests:
       storage: 5Gi
@@ -33,7 +36,7 @@ spec:
     storage: 5Gi
   accessModes:
     - ReadWriteOnce
-  storageClassName: manual
+  storageClassName: manual # (Keep this, it's correct)
   hostPath:
     path: "{{ .Values.global.hostMountPath }}/postgres"
 ---
@@ -47,6 +50,6 @@ spec:
     storage: 5Gi
   accessModes:
     - ReadWriteOnce
-  storageClassName: manual
+  storageClassName: manual # (Keep this, it's correct)
   hostPath:
     path: "{{ .Values.global.hostMountPath }}/qdrant"
