@@ -13,10 +13,10 @@ spec:
         app: api
     spec:
       # Removed hostAliases since LiteLLM is natively in-cluster now
-      initContainers:
-        - name: wait-for-migrate
-          image: bitnami/kubectl:latest
-          command: ["kubectl", "wait", "--for=condition=complete", "job/{{ .Release.Name }}-migrate", "--timeout=120s"]
+      # initContainers:
+      #   - name: wait-for-migrate
+      #     image: bitnami/kubectl:latest
+      #     command: ["kubectl", "wait", "--for=condition=complete", "job/{{ .Release.Name }}-migrate", "--timeout=120s"]
       containers:
         - name: api
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
