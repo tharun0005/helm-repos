@@ -17,6 +17,10 @@ spec:
       #   - name: wait-for-migrate
       #     image: bitnami/kubectl:latest
       #     command: ["kubectl", "wait", "--for=condition=complete", "job/{{ .Release.Name }}-migrate", "--timeout=120s"]
+      securityContext:
+        runAsUser: 999      # Runs the container as your image's appuser (UID 999)
+        runAsGroup: 999     # Runs the container processes as appgroup (GID 999)
+        fsGroup: 999
       containers:
         - name: api
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
